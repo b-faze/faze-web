@@ -2,6 +2,7 @@
 
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -43,7 +44,7 @@ const Navigation = () => {
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
                 {items.map((item) => (
-                  <a
+                  <Link
                     key={item.name}
                     href={item.href}
                     aria-current={item.current ? 'page' : undefined}
@@ -53,7 +54,7 @@ const Navigation = () => {
                     )}
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
