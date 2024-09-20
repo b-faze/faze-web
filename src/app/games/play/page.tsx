@@ -1,13 +1,21 @@
 "use client";
 
-import { useCallback } from "react";
+import { Suspense, useCallback } from "react";
 import Grid from "../create/Grid";
 import { GameConfig, GameResult } from "../gameConfig";
 import { GameRoutes, useGameData, useGameRouter } from "../navigation";
 import { useGameGrid } from "./useGame";
 import { Button } from "@headlessui/react";
 
-export default function View() {
+export default function Play() {
+  return (
+    <Suspense fallback={<p>loading...</p>}>
+      <Page />
+    </Suspense>
+  );
+}
+
+const Page = () => {
   const data = useGameData();
   const router = useGameRouter();
 
@@ -58,7 +66,7 @@ const GameGrid = ({config}: GameGridProps) => {
           <p>Player 2 Wins!</p>
         )}
         {result === GameResult.Draw && (
-          <p>It's a draw!</p>
+          <p>It&apos;s a draw!</p>
         )}
       </div>
       <Button 

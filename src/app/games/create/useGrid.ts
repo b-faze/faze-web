@@ -31,7 +31,7 @@ export const useGrid = (size: number) => {
 
   const reset = useCallback(() => {
     setGrid(createGrid(size));
-  }, []);
+  }, [size]);
 
   return {
     grid: grid,
@@ -61,8 +61,8 @@ export const useWinningStates = (defaultStates: number[]) => {
 const calcState = (grid: Grid): number => {
   const size = grid.cells.length;
   let state = 0;
-  for (var x = 0; x < size; x++) {
-    for (var y = 0; y < size; y++) {
+  for (let x = 0; x < size; x++) {
+    for (let y = 0; y < size; y++) {
       const cell = grid.cells[x][y];
       if (!cell.active) continue;
 

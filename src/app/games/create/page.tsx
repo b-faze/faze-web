@@ -1,16 +1,24 @@
 "use client";
 
 import { Input, Field, Label, Description, Button } from '@headlessui/react'
-import { useCallback, useState } from 'react';
+import { Suspense, useCallback, useState } from 'react';
 import Grid from './Grid';
 import { GameRoutes, useGameData, useGameRouter } from '../navigation';
 import { useGrid, useWinningStates } from './useGrid';
 
 export default function Create() {
+  return (
+    <Suspense fallback={<p>loading...</p>}>
+      <Page />
+    </Suspense>
+  );
+}
+
+const Page = () => {
   const data = useGameData();
   const router = useGameRouter();
   const [name, setName] = useState(data?.name ?? "New game");
-  const [size, setSize] = useState(data?.gridSize ?? 3);
+  const [size] = useState(data?.gridSize ?? 3);
   const {grid, toggle, reset: resetGrid} = useGrid(size);
   const {states, add, reset: resetStates} = useWinningStates(data?.winningStates ?? []);
 
@@ -25,7 +33,7 @@ export default function Create() {
       gridSize: size,
       winningStates: states,
     })
-  }, [router, name, states]);
+  }, [router, name, size, states]);
 
   return (
     <div className="">
@@ -41,7 +49,7 @@ export default function Create() {
           </Button>
           <div style={{padding: 16}}>
             {states.map(s => (
-              <p>{s}</p>
+              <p key={s}>{s}</p>
             ))}
           </div>
           <Button 
