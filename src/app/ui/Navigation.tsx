@@ -21,7 +21,8 @@ const Navigation = () => {
 
   const items = useMemo<NavigationItem[]>(() => ([
     { name: 'Dashboard', href: '/' },
-    { name: 'Something', href: '/something/else' },
+    { name: 'Games', href: '/games' },
+    { name: 'Create', href: '/games/create' },
   ]).map(item => ({...item, current: currPath === item.href})), [currPath])
 
   return (
