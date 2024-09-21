@@ -33,9 +33,9 @@ export const Canvas = ({config}: CanvasProps) => {
   return (
     <div>
       <div className="flex">
-        <p style={{padding: 8}}>Wins: {stats.wins}</p>
-        <p style={{padding: 8}}>Loses: {stats.loses}</p>
-        <p style={{padding: 8}}>Draws: {stats.draws}</p>
+        <p style={{padding: 8}}>Wins: {stats.wins.toLocaleString()}</p>
+        <p style={{padding: 8}}>Loses: {stats.loses.toLocaleString()}</p>
+        <p style={{padding: 8}}>Draws: {stats.draws.toLocaleString()}</p>
       </div>
       <canvas 
         ref={ref}
