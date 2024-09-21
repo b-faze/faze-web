@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useCallback } from "react";
+import { Suspense } from "react";
 import Grid from "../create/Grid";
 import { GameConfig, GameResult } from "../game";
 import { GameRoutes, useGameData, useGameRouter } from "../navigation";
