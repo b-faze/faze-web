@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Game, GameConfig, GameResult } from "../game";
-import { Button } from "@headlessui/react";
+import { Button, Input } from "@headlessui/react";
 
 
 type CanvasProps = {
@@ -11,18 +11,19 @@ type CanvasProps = {
 export const Canvas = ({config}: CanvasProps) => {
   const {ref, worldTree, canvas, reset} = useGameCanvas(config);
   const [stats, setStats] = useState(worldTree.getStats());
+  const [paintDepth, setPaintDepth] = useState(1);
 
   const step = useCallback(() => {
     worldTree.simulate();
-    canvas?.paint(1);
+    canvas?.paint(paintDepth);
     setStats({...worldTree.getStats()});
-  }, [worldTree, canvas]);
+  }, [worldTree, canvas, paintDepth]);
 
   const {play, toggle, stop} = useAnimation(step);
 
   useEffect(() => {
-    canvas?.paint(1);
-  }, [canvas]);
+    canvas?.paint(paintDepth);
+  }, [canvas, paintDepth]);
 
   const onReset = useCallback(() => {
     stop();
@@ -32,6 +33,8 @@ export const Canvas = ({config}: CanvasProps) => {
 
   return (
     <div>
+      <span>Paint depth: </span>
+      <Input type="number" defaultValue={paintDepth} onChange={(e) => setPaintDepth(parseInt(e.currentTarget.value))} />
       <div className="flex">
         <p style={{padding: 8}}>Wins: {stats.wins.toLocaleString()}</p>
         <p style={{padding: 8}}>Loses: {stats.loses.toLocaleString()}</p>
@@ -186,26 +189,25 @@ class WorldTree implements PaintedTree {
   };
 
   simulate() {
-    const stats = this.stats;
-
     if (Object.keys(this.children).length === 0) {
       const result = WorldTree.simulate(this.game);
 
       switch (result) {
         case GameResult.Win:
-          stats.wins += 1;
+          this.stats.wins += 1;
           break;
         case GameResult.Loss:
-          stats.loses += 1;
+          this.stats.loses += 1;
           break;
         case GameResult.Draw:
-          stats.draws += 1;
+          this.stats.draws += 1;
           break;
       }
 
       return;
     }
 
+    const stats: GameStats = {wins: 0, loses: 0, draws: 0};
     const children = Object.values(this.children);
     for (let i = 0; i < children.length; i++) {
       const child = children[i];
@@ -214,6 +216,7 @@ class WorldTree implements PaintedTree {
       stats.loses += child.stats.loses;
       stats.draws += child.stats.draws;
     }
+    this.stats = stats;
   }
 
   private static simulate(game: Game): GameResult | undefined {

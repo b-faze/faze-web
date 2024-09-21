@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 export enum GameRoutes {
   Create = "/games/create",
+  View = "/games/view",
   Play = "/games/play",
   Visualise = "/games/visualise"
 }

@@ -27,8 +27,8 @@ const Page = () => {
     resetGrid();
   }, [grid, add, resetGrid]);
 
-  const onPlay = useCallback(() => {
-    router.push(GameRoutes.Play, {
+  const onCreate = useCallback(() => {
+    router.push(GameRoutes.View, {
       name: name,
       gridSize: size,
       winningStates: states,
@@ -40,31 +40,32 @@ const Page = () => {
       <main className="">
         <TextInput label="Name" defaultValue={name} onChange={setName} />
 
-        <div className="flex">
-          <Grid cells={grid.cells} onClick={toggle} />
-          <Button 
-            onClick={() => onAdd()}
-            className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
-            Add
-          </Button>
-          <div style={{padding: 16}}>
-            {states.map(s => (
-              <p key={s}>{s}</p>
-            ))}
+        <div className="flex grid content-center">
+          <div className="flex content-center">
+            <Grid cells={grid.cells} onClick={toggle} />
+            <Button 
+              onClick={() => onAdd()}
+              className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+              Add
+            </Button>
+            <Button 
+              onClick={() => resetStates()}
+              className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+              Reset
+            </Button>
+            <Button 
+              style={{marginLeft: 16}}
+              onClick={onCreate}
+              className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+              Create
+            </Button>
           </div>
-          <Button 
-            onClick={() => resetStates()}
-            className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
-            Reset
-          </Button>
+          <div style={{padding: 16, overflowY: "scroll"}}>
+              {states.map(s => (
+                <p key={s}>{s}</p>
+              ))}
+            </div>
         </div>
-
-
-        <Button 
-          onClick={onPlay}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
-          Play
-        </Button>
       </main>
     </div>
   );
