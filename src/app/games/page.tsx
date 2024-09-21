@@ -8,8 +8,8 @@ export default function Games() {
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <ul>
           <li>
-            <Link href="/games/play?data=eyJuYW1lIjoiTmF1Z2h0cyBhbmQgQ3Jvc3NlcyIsImdyaWRTaXplIjozLCJ3aW5uaW5nU3RhdGVzIjpbNzMsMTQ2LDI5Miw3LDU2LDQ0OCwyNzMsODRdfQ%3D%3D">
-              Play Naughts and Crosses
+            <Link href="/games/view?data=eyJuYW1lIjoiTmF1Z2h0cyBhbmQgQ3Jvc3NlcyIsImdyaWRTaXplIjozLCJ3aW5uaW5nU3RhdGVzIjpbNzMsMTQ2LDI5Miw3LDU2LDQ0OCwyNzMsODRdfQ%3D%3D">
+              Naughts and Crosses
             </Link>
           </li>
         

@@ -1,6 +1,6 @@
 "use client";
 
-import { CellData } from "./useGrid";
+import { CellData } from "../useGrid";
 
 type GridProps = {
   cells: CellData[][];

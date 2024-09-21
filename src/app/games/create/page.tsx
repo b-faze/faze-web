@@ -4,7 +4,7 @@ import { Input, Field, Label, Description, Button } from '@headlessui/react'
 import { Suspense, useCallback, useState } from 'react';
 import Grid from './Grid';
 import { GameRoutes, useGameData, useGameRouter } from '../navigation';
-import { useGrid, useWinningStates } from './useGrid';
+import { useGrid, useWinningStates } from '../useGrid';
 
 export default function Create() {
   return (

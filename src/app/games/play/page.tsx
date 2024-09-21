@@ -2,7 +2,7 @@
 
 import { Suspense, useCallback } from "react";
 import Grid from "../create/Grid";
-import { GameConfig, GameResult } from "../gameConfig";
+import { GameConfig, GameResult } from "../game";
 import { GameRoutes, useGameData, useGameRouter } from "../navigation";
 import { useGameGrid } from "./useGame";
 import { Button } from "@headlessui/react";

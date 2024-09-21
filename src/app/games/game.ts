@@ -34,15 +34,33 @@ export class Game {
     return this.state;
   }
 
+  GetAvailableMoves(): number[] {
+    const availableMoves: number[] = [];
+    if (this.state.result) return availableMoves;
+
+    const allMoves = this.state.p1Moves | this.state.p2Moves;
+
+    for (let move = 0; move < this.config.gridSize * this.config.gridSize; move++) {
+      const bitwiseMove = 1 << move;
+      if ((allMoves & bitwiseMove) !== bitwiseMove) {
+        availableMoves.push(move);
+      }
+    }
+    return availableMoves;
+  }
+
   Move = (move: number): Game => {
     const state = this.state;
     if (state.result !== undefined) {
       throw new Error("the game already has a result");
     }
   
+    if (move < 0 || move > this.config.gridSize * this.config.gridSize) {
+      throw new Error("invalid move " + move);
+    }
+
     let newP1Moves = state.p1Moves;
     let newP2Moves = state.p2Moves;
-  
     const bitwiseMove = 1 << move;
   
     if (state.p1Turn) {
@@ -51,9 +69,11 @@ export class Game {
       newP2Moves |= bitwiseMove;
     }
 
-    if (newP1Moves === state.p1Moves && newP2Moves === state.p2Moves
-    || (newP1Moves & newP2Moves) !== 0) {
-      throw new Error("invalid move")
+    if (newP1Moves === state.p1Moves && newP2Moves === state.p2Moves) {
+      throw new Error("no change")
+    }
+    if ((newP1Moves & newP2Moves) !== 0) {
+      throw new Error("move has been taken")
     }
   
     const newGame = this.clone();
@@ -63,7 +83,6 @@ export class Game {
       p2Moves: newP2Moves,
       result: Game.checkResult(newP1Moves, newP2Moves, this.config)
     };
-    console.log(newGame.state, newGame.config);
     return newGame;
   }
 

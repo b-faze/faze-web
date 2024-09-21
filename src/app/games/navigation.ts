@@ -1,10 +1,11 @@
 import { useCallback, useMemo } from "react";
-import { GameConfig } from "./gameConfig";
+import { GameConfig } from "./game";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export enum GameRoutes {
   Create = "/games/create",
-  Play = "/games/play"
+  Play = "/games/play",
+  Visualise = "/games/visualise"
 }
 
 export const useGameRouter = () => {
