@@ -96,7 +96,8 @@ const useAnimation = (callback: () => void) => {
 const useGameCanvas = (config: GameConfig) => {
   const {ref} = useCanvas();
   const [worldTree, setWorldTree] = useState(new WorldTree(0, new Game(config)));
-  const canvas = useMemo(() => ref.current ? new GameCanvas(ref.current, worldTree) : undefined, [ref, worldTree]);
+  const canvasRef = ref.current;
+  const canvas = useMemo(() => canvasRef ? new GameCanvas(canvasRef, worldTree) : undefined, [canvasRef, worldTree]);
 
   const reset = useCallback(() => {
     setWorldTree(new WorldTree(0, new Game(config)));
