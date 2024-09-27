@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Game, GameConfig, GameResult } from "../game";
-import { Button, Input } from "@headlessui/react";
+import { Button } from "@/app/ui/Button";
 
 
 type CanvasProps = {
@@ -12,6 +12,8 @@ export const Canvas = ({config}: CanvasProps) => {
   const {ref, worldTree, canvas, reset} = useGameCanvas(config);
   const [stats, setStats] = useState(worldTree.getStats());
   const [paintDepth, setPaintDepth] = useState(1);
+
+  const statsTotal = stats.wins + stats.loses + stats.draws;
 
   const step = useCallback(() => {
     worldTree.simulate();
@@ -34,11 +36,11 @@ export const Canvas = ({config}: CanvasProps) => {
   return (
     <div>
       <span>Paint depth: </span>
-      <Input type="number" defaultValue={paintDepth} onChange={(e) => setPaintDepth(parseInt(e.currentTarget.value))} />
+      <input type="number" defaultValue={paintDepth} onChange={(e) => setPaintDepth(parseInt(e.currentTarget.value))} />
       <div className="flex">
-        <p style={{padding: 8}}>Wins: {stats.wins.toLocaleString()}</p>
-        <p style={{padding: 8}}>Loses: {stats.loses.toLocaleString()}</p>
-        <p style={{padding: 8}}>Draws: {stats.draws.toLocaleString()}</p>
+        <p style={{padding: 8}}>Wins: {stats.wins.toLocaleString()}, rate: {(stats.wins / statsTotal).toFixed(2)}</p>
+        <p style={{padding: 8}}>Loses: {stats.loses.toLocaleString()}, rate: {(stats.loses / statsTotal).toFixed(2)}</p>
+        <p style={{padding: 8}}>Draws: {stats.draws.toLocaleString()}, rate: {(stats.draws / statsTotal).toFixed(2)}</p>
       </div>
       <canvas 
         ref={ref}
@@ -48,18 +50,15 @@ export const Canvas = ({config}: CanvasProps) => {
       />
       <Button 
         disabled={play}
-        onClick={() => step()}
-        className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+        onClick={() => step()}>
         Step
       </Button>
       <Button 
-        onClick={() => toggle()}
-        className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+        onClick={() => toggle()}>
         {play ? "Pause" : "Play"}
       </Button>
       <Button 
-        onClick={() => onReset()}
-        className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+        onClick={() => onReset()}>
         Reset
       </Button>
     </div>

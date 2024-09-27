@@ -9,6 +9,8 @@ export type CellData = {
   y: number;
   color: string;
   active: boolean;
+  baseColor: string;
+  count: number;
 }
 
 export const useGrid = (size: number) => {
@@ -21,7 +23,9 @@ export const useGrid = (size: number) => {
         x: cell.x,
         y: cell.y,
         color: color ?? "green",
-        active: !cell.active
+        active: !cell.active,
+        baseColor: "white",
+        count: 0,
       }
       return {
         cells: newCells,
@@ -74,7 +78,7 @@ const calcState = (grid: Grid): number => {
   return state;
 }
 
-const createGrid = (size: number): Grid => {
+export const createGrid = (size: number): Grid => {
   const rows: CellData[][] = [];
   
   for (let i = 0; i < size; i++) {
@@ -84,7 +88,9 @@ const createGrid = (size: number): Grid => {
         x: i,
         y: j,
         color: "grey",
-        active: false
+        active: false,
+        baseColor: "white",
+        count: 0,
       }
       row.push(cell);
     }

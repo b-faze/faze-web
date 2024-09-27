@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/faze-web'
+  basePath: '/faze-web',
+  images: {unoptimized: true},
 };
 
 export default nextConfig;

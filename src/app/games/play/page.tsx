@@ -5,7 +5,8 @@ import Grid from "../create/Grid";
 import { GameConfig, GameResult } from "../game";
 import { GameRoutes, useGameData, useGameRouter } from "../navigation";
 import { useGameGrid } from "./useGame";
-import { Button } from "@headlessui/react";
+import { PageBody } from "@/app/ui/PageBody";
+import { Button } from "@/app/ui/Button";
 
 export default function Play() {
   return (
@@ -31,22 +32,17 @@ const Page = () => {
 
 
   return (
-    <div className="">
-      <main className="">
-        <h1>NAME: {data.name}</h1>
+    <PageBody title={data?.name ?? ""}>
         <GameGrid config={data} />
         <Button 
-          onClick={() => router.push(GameRoutes.Create, data)}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+          onClick={() => router.push(GameRoutes.Create, data)}>
           Edit
         </Button>
         <Button 
-          onClick={() => router.push(GameRoutes.View, data)}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+          onClick={() => router.push(GameRoutes.View, data)}>
           View
         </Button>
-      </main>
-    </div>
+     </PageBody>
   );
 };
 
@@ -71,8 +67,7 @@ const GameGrid = ({config}: GameGridProps) => {
         )}
       </div>
       <Button 
-        onClick={() => reset()}
-        className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+        onClick={() => reset()}>
         Reset
       </Button>
     </div>

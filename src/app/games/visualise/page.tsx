@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useGameData } from "../navigation";
 import { Canvas } from "./Canvas";
+import { PageBody } from "../../ui/PageBody";
 
 export default function Visualise() {
   return (
@@ -16,13 +17,10 @@ const Page = () => {
   const data = useGameData();
 
   return (
-    <div>
-      <h1>{data?.name}</h1>
-      <div className="grid items-center justify-items-center">
+    <PageBody title={data?.name ?? ""}>
         {data && (
           <Canvas config={data} />
-        )}
-      </div>    
-    </div>
+        )}  
+    </PageBody>
   );
 }

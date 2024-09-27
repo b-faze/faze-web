@@ -2,7 +2,8 @@
 
 import { Suspense } from "react";
 import { GameRoutes, useGameData, useGameRouter } from "../navigation";
-import { Button } from "@headlessui/react";
+import { PageBody } from "@/app/ui/PageBody";
+import { Button } from "@/app/ui/Button";
 
 export default function View() {
   return (
@@ -17,24 +18,19 @@ const Page = () => {
   const router = useGameRouter();
 
   return (
-    <div>
-        <h1>{data?.name}</h1>
-
+    <PageBody title={data?.name ?? ""}>
         <Button 
-          onClick={() => router.push(GameRoutes.Create, data)}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+          onClick={() => router.push(GameRoutes.Create, data)}>
           Edit
         </Button>
         <Button 
-          onClick={() => router.push(GameRoutes.Play, data)}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+          onClick={() => router.push(GameRoutes.Play, data)}>
           Play
         </Button>
         <Button 
-          onClick={() => router.push(GameRoutes.Visualise, data)}
-          className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[open]:bg-gray-700 data-[focus]:outline-1 data-[focus]:outline-white">
+          onClick={() => router.push(GameRoutes.Visualise, data)}>
           Visualise
         </Button>
-    </div>
+    </PageBody>
   );
 }
