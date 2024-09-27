@@ -1,12 +1,16 @@
-import { PageBody } from "./ui/PageBody";
+"use client";
 
-export default function Home() {
+import useWindowDimensions from "./hooks/useWindowDimensions";
+import { Grid } from "./ui/Grid";
+
+export default function Page() {
+  const windowDimensions = useWindowDimensions();
+
+  if (!windowDimensions) {
+    return null;
+  }
+
   return (
-    <PageBody title="Dashboard">
-      <ul>
-        <li><a href="https://headlessui.com/" target="_blank">https://headlessui.com/</a></li>
-        <li><a href="https://tailwindui.com/documentation" target="_blank">https://tailwindui.com/documentation</a></li>
-      </ul>
-    </PageBody>
+    <Grid width={windowDimensions.width} height={windowDimensions.height} tileSize={200} renderTile={(x, y) => <p>({x}, {y})</p>} />
   );
 }

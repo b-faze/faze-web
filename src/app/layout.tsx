@@ -18,7 +18,6 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AddBootstrap />
-        <Navigation />
         {children}
       </body>
     </html>
