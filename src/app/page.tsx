@@ -10,7 +10,28 @@ export default function Page() {
     return null;
   }
 
+  const { width, height } = windowDimensions;
+  const tileSize = 200;
+  const rw = width / tileSize;
+  const rh = height / tileSize;
+  const cols = Math.floor(rw);
+  const rows = Math.floor(rh);
+  const pw = Math.floor((width - cols * tileSize) / 2);
+  const ph = Math.floor((height - rows * tileSize) / 2);
+
   return (
-    <Grid width={windowDimensions.width} height={windowDimensions.height} tileSize={200} renderTile={(x, y) => <p>({x}, {y})</p>} />
+    <div style={{
+      width: width,
+      height: height,
+      paddingTop: ph,
+      paddingBottom: ph,
+      paddingLeft: pw,
+      paddingRight: pw
+    }}>
+      <Grid 
+        cols={cols} 
+        rows={rows} 
+      />
+    </div>
   );
 }

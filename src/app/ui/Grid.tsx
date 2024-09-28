@@ -1,76 +1,130 @@
-import { useCallback, useMemo, useState } from "react";
+import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from "react";
 
 type Tile = {
   index: number;
   x: number;
   y: number;
-  flip: boolean;
+  selectable: boolean;
+  active: boolean;
 }
 
 type GridProps = {
-  width: number;
-  height: number;
-  tileSize: number;
-  renderTile: (x: number, y: number) => React.ReactNode;
+  cols: number;
+  rows: number;
+  depth?: number;
 }
-export const Grid = ({width, height, tileSize, renderTile}: GridProps) => { 
-  const cols = Math.floor(width / tileSize);
-  const rows = Math.floor(height / tileSize);
+export const Grid = ({cols, rows, depth = 0}: GridProps) => { 
+  const maxDepth = 1;
   const [tiles, setTiles] = useState<Tile[]>(() => Array.apply(null, Array(rows * cols)).map((_, index) => ({
       index: index,
       x: index % cols,
       y: Math.floor(index / cols),
-      flip: false
+      selectable: true,
+      active: false
     })));
 
-  const onClick = useCallback((tile: Tile) => {
+  useEffect(() => {
+    // recreate the grid tiles when the number of columns or rows change
+    setTiles(Array.apply(null, Array(rows * cols)).map((_, index) => ({
+      index: index,
+      x: index % cols,
+      y: Math.floor(index / cols),
+      selectable: true,
+      active: false
+    })));
+  }, [cols, rows]);
+
+  const onSelect = useCallback((tile: Tile) => {
+    const active = !tile.active;
+    const selectable = depth === maxDepth || !active;
     setTiles(ts => {
-      const newTs = [...ts];
-      newTs[tile.index] = {...tile, flip: !tile.flip};
+      const newTs = ts.map(t => ({...t, selectable }));
+      newTs[tile.index] = {...tile, selectable, active};
       return newTs;
-    })
-  }, []);
+    });
+  }, [depth]);
 
   return (
-    <div className="tile-grid" style={{
-      width: width, 
-      height: height, 
-      display: "grid",
-      gridTemplateRows: `repeat(${rows}, ${tileSize}px)`,
-      gridTemplateColumns: `repeat(${cols}, ${tileSize}px)`,
-      alignContent: "center",
-      justifyContent: "center",
-    }}>
+    <div 
+      className="tile-grid" 
+      style={{
+        width: "100%", 
+        height: "100%", 
+        display: "grid",
+        gridTemplateRows: `repeat(${rows}, 1fr)`,
+        gridTemplateColumns: `repeat(${cols}, 1fr)`,
+        alignContent: "center",
+        justifyContent: "center",
+      }}
+      onContextMenu={e => e.preventDefault()}>
       {tiles.map(tile => (
-          <Tile key={tile.index} tile={tile} onClick={onClick}>{renderTile(tile.x, tile.y)}</Tile>
+          <Tile key={tile.index} depth={depth + 1}tile={tile} onSelect={onSelect} />
       ))}
     </div>
   )
 };
 
 type TileProps = {
+  depth: number;
   tile: Tile;
-  onClick: (tile: Tile) => void;
-  children: React.ReactNode;
+  onSelect: (tile: Tile) => void;
 }
-const Tile = ({tile, onClick, children}: TileProps) => {
-  const {x, y, flip} = tile;
-  const flipClass = flip ? "flip" : "";
+const Tile = ({depth, tile, onSelect}: TileProps) => {
+  const minSubGridSize = 2;
+  const [subGridSize, setSubGridSize] = useState(minSubGridSize);
+  const [pressed, setPressed] = useState(false);
+  const {x, y, selectable, active} = tile;
+  const selectableClass = selectable ? "selectable" : "";
+  const pressedClass = pressed ? "pressed" : "";
+  const activeClass = active ? "active" : "";
+
+  const onClick = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
+    if (!tile.selectable) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    console.log(e);
+    
+    onSelect(tile);
+  }, [tile]);
+
+  const onAuxClick = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
+    if (!tile.selectable && !tile.active) return;
+
+    e.preventDefault();
+    if (tile.active) {
+      e.stopPropagation();
+    }
+
+    if (e.button === 1) {
+      setSubGridSize(subGridSize + 1);
+    } else if (e.button === 2) {
+      if (subGridSize > minSubGridSize) {
+        setSubGridSize(subGridSize - 1);
+      } else {
+        onSelect(tile);
+      }
+    }
+
+  }, [subGridSize, onSelect, tile]);
+
+
   return (
     <div 
-      className={`tile ${flipClass}`}
+      className={`tile ${selectableClass} ${pressedClass} ${activeClass}`}
       style={{
         gridColumn: x + 1,
         gridRow: y + 1,
       }}
-      onClick={() => onClick(tile)}>
+      onMouseDown={() => setPressed(true)}
+      onMouseUp={() => setPressed(false)}
+      onMouseLeave={() => setPressed(false)}
+      onAuxClick={onAuxClick}
+      onClick={onClick}>
         <div className="body">
-          <div className="back">
-            {children}
-          </div>
-          <div className="front">
-
-          </div>
+          {active && depth < 2 && (
+            <Grid cols={subGridSize} rows={subGridSize} depth={depth} />
+          )}
         </div>
     </div>
   );
