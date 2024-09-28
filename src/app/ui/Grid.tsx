@@ -27,14 +27,19 @@ export const Grid = ({cols, rows, subgrid = false}: GridProps) => {
     })));
   }, [cols, rows]);
 
-  const onTileChange = useCallback((tile: Tile) => {
+  const onTileChange = useCallback((tile: Tile, action?: TileAction) => {
     const { active, pressed } = tile;
     const siblingsSelectable = subgrid || !active;
-    setTiles(ts => {
-      const newTs = ts.map(t => ({...t, selectable: !t.active && siblingsSelectable, pressed: t.active && active && pressed }));
-      newTs[tile.index] = tile;
-      return newTs;
-    });
+    if (action === TileAction.Confirmed && tile.active && subgrid) {
+      // confirm selection, so reset
+      setTiles(ts => ts.map(t => ({...t, selectable: true, pressed: false, active: false })));
+    } else {
+      setTiles(ts => {
+        const newTs = ts.map(t => ({...t, selectable: siblingsSelectable && !t.active, pressed: t.active && active && pressed && action === TileAction.Confirming }));
+        newTs[tile.index] = tile;
+        return newTs;
+      });
+    }
   }, [subgrid]);
 
 
@@ -59,6 +64,11 @@ export const Grid = ({cols, rows, subgrid = false}: GridProps) => {
   )
 };
 
+enum TileAction {
+  Confirming = "confirming",
+  Confirmed = "confirmed"
+}
+
 type Tile = {
   index: number;
   x: number;
@@ -71,7 +81,7 @@ type Tile = {
 type TileProps = {
   isSubgrid: boolean;
   tile: Tile;
-  onChange: (tile: Tile) => void;
+  onChange: (tile: Tile, action?: TileAction) => void;
 }
 const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
   const minSubgridSize = 2;
@@ -81,21 +91,21 @@ const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
   const pressedClass = pressed ? "pressed" : "";
   const activeClass = active ? "active" : "";
 
-  const onClick = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
-    if (!tile.selectable) return;
+  const onPress = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
+    if (e.button === 0) {
+      onChange({
+        ...tile,
+        pressed: true
+      }, TileAction.Confirming);
+    } else if (e.button === 2 && tile.active) {
+      onChange({
+        ...tile,
+        pressed: true
+      });
+    }
+  }, [onChange, tile]);
 
-    e.preventDefault();
-    e.stopPropagation();
-    console.log(e);
-    
-    onChange({
-      ...tile,
-      active: true,
-      selectable: false
-    });
-  }, [tile]);
-
-  const onAuxClick = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
+  const onAuxRelease = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
     if (!tile.selectable && !tile.active) return;
 
     e.preventDefault();
@@ -106,26 +116,37 @@ const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
     if (e.button === 1) {
       setSubgridSize(subgridSize + 1);
     } else if (e.button === 2) {
-      if (subgridSize > minSubgridSize) {
-        setSubgridSize(subgridSize - 1);
-      } else {
+      if (tile.active) {
         onChange({
           ...tile,
           active: false,
-          selectable: true
+          selectable: true,
+          pressed: false,
         });
+      } else if (subgridSize > minSubgridSize) {
+        setSubgridSize(subgridSize - 1);
       }
     }
 
   }, [subgridSize, onChange, tile]);
 
-  const onPressed = useCallback(() => {
-    onChange({
-      ...tile,
-      pressed: true
-    })
-  }, [onChange, tile]);
-
+  const onRelease = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
+    if (e.button === 0) {
+      if (!tile.selectable && !tile.active) return;
+      e.preventDefault();
+      e.stopPropagation();
+      
+      console.log("released");
+      onChange({
+        ...tile,
+        active: true,
+        selectable: false,
+        pressed: false
+      }, tile.active ? TileAction.Confirmed : undefined);
+    } else {
+      onAuxRelease(e);
+    }
+  }, [tile, onAuxRelease]);
 
   return (
     <div 
@@ -134,10 +155,8 @@ const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
         gridColumn: x + 1,
         gridRow: y + 1,
       }}
-      onMouseDown={onPressed}
-      onMouseUp={() => onChange({...tile, pressed: false})}
-      onAuxClick={onAuxClick}
-      onClick={onClick}>
+      onMouseDown={onPress}
+      onMouseUp={onRelease}>
         <div className="body">
           {active && !isSubgrid && (
             <Grid subgrid cols={subgridSize} rows={subgridSize} />
