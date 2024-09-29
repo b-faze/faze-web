@@ -32,15 +32,14 @@ export const Grid = ({cols, rows, subgrid = false}: GridProps) => {
     const siblingsSelectable = subgrid || !active;
     if (action === TileAction.Confirmed && tile.active && subgrid) {
       // confirm selection, so reset
-      setTiles(ts => ts.map(t => ({...t, selectable: true, pressed: false, active: false })));
+      console.log(tiles.filter(t => t.active).map(t => t.index));
+      setTiles(tiles.map(t => ({...t, selectable: true, pressed: false, active: false })));
     } else {
-      setTiles(ts => {
-        const newTs = ts.map(t => ({...t, selectable: siblingsSelectable && !t.active, pressed: t.active && active && pressed && action === TileAction.Confirming }));
-        newTs[tile.index] = tile;
-        return newTs;
-      });
+      const newTs = tiles.map(t => ({...t, selectable: siblingsSelectable && !t.active, pressed: t.active && active && pressed && action === TileAction.Confirming }));
+      newTs[tile.index] = tile;
+      setTiles(newTs);
     }
-  }, [subgrid]);
+  }, [tiles, subgrid]);
 
 
   const subgridClass = subgrid ? "subgrid" : "";
@@ -92,6 +91,8 @@ const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
   const activeClass = active ? "active" : "";
 
   const onPress = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
+    if (!tile.selectable && !tile.active) return;
+
     if (e.button === 0) {
       onChange({
         ...tile,
@@ -108,35 +109,30 @@ const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
   const onAuxRelease = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
     if (!tile.selectable && !tile.active) return;
 
-    e.preventDefault();
-    if (tile.active) {
-      e.stopPropagation();
-    }
-
     if (e.button === 1) {
       setSubgridSize(subgridSize + 1);
     } else if (e.button === 2) {
-      if (tile.active) {
+      if (subgridSize > minSubgridSize) {
+        setSubgridSize(subgridSize - 1);
+      } else if (tile.active) {
         onChange({
           ...tile,
           active: false,
           selectable: true,
           pressed: false,
         });
-      } else if (subgridSize > minSubgridSize) {
-        setSubgridSize(subgridSize - 1);
       }
     }
 
   }, [subgridSize, onChange, tile]);
 
   const onRelease = useCallback<MouseEventHandler<HTMLDivElement>>((e) => {
+    if (!tile.selectable && !tile.active) return;
+
     if (e.button === 0) {
-      if (!tile.selectable && !tile.active) return;
       e.preventDefault();
       e.stopPropagation();
       
-      console.log("released");
       onChange({
         ...tile,
         active: true,
