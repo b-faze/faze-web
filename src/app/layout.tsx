@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import  "bootstrap/dist/css/bootstrap.min.css";
-import Navigation from "./ui/Navigation";
 import AddBootstrap from "./ui/AddBootstrap";
 
 export const metadata: Metadata = {

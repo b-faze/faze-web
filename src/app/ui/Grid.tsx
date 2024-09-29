@@ -1,4 +1,4 @@
-import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from "react";
+import { MouseEventHandler, useCallback, useEffect, useState } from "react";
 
 type GridProps = {
   cols: number;
@@ -6,7 +6,7 @@ type GridProps = {
   subgrid?: boolean;
 }
 export const Grid = ({cols, rows, subgrid = false}: GridProps) => { 
-  const [tiles, setTiles] = useState<Tile[]>(() => Array.apply(null, Array(rows * cols)).map((_, index) => ({
+  const [tiles, setTiles] = useState<Tile[]>(newArray<Tile>(rows * cols, (index: number) => ({
       index: index,
       x: index % cols,
       y: Math.floor(index / cols),
@@ -17,7 +17,7 @@ export const Grid = ({cols, rows, subgrid = false}: GridProps) => {
 
   useEffect(() => {
     // recreate the grid tiles when the number of columns or rows change
-    setTiles(Array.apply(null, Array(rows * cols)).map((_, index) => ({
+    setTiles(newArray<Tile>(rows * cols, (index: number) => ({
       index: index,
       x: index % cols,
       y: Math.floor(index / cols),
@@ -146,7 +146,7 @@ const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
     } else {
       onAuxRelease(e);
     }
-  }, [tile, onAuxRelease]);
+  }, [tile, onAuxRelease, onChange]);
 
   return (
     <div 
@@ -164,4 +164,13 @@ const Tile = ({isSubgrid, tile, onChange}: TileProps) => {
         </div>
     </div>
   );
+}
+
+const newArray = <T,>(length: number, fn: (i: number) => T): T[] => {
+  const result: T[] = [];
+  for (let i = 0; i < length; i++) {
+    result.push(fn(i));
+  }
+
+  return result;
 }
